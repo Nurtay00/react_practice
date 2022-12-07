@@ -8,9 +8,8 @@ function App() {
 
   return (
     <div className="App">
-        {/*<FirstPage/>*/}
         <Example/>
-
+    <div> Hello world </div>
     </div>
   );
 }

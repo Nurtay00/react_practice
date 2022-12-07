@@ -368,7 +368,7 @@
 
 // for(let i=1; i<10;i++)
 
-
+import './styles.css'
 
 const data = {
     date:new Date(),
@@ -486,7 +486,14 @@ const Example = ()=> {
 
 
 
-    return <div>
+    return <div className='wrapper'>
+        <div className='header'>
+            <div className='title'> Поиск дешевых авиабилетов</div>
+            <div className='subtitle'> Легкий способ купить авиабилеты дешево </div>
+        </div>
+        <div className='main'>
+            
+        </div>
 
     </div>
 }
