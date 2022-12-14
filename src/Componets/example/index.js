@@ -1,64 +1,12 @@
 import './styles.css'
 import {useState} from "react";
-
-const data = {
-    date:new Date(),
-    city: [
-        {
-            name:'Almaty',
-            x:12,
-            y:30,
-        },
-        {
-            name:'Astana',
-            x:20,
-            y:49,
-        },
-        {
-            name:'Moscow',
-            x:50,
-            y:-159,
-        },
-        {
-            name:'London',
-            x:-490,
-            y:200,
-        },
-        {
-            name:'Dubai',
-            x:500,
-            y:-49,
-        }
-    ],
-    transport:[
-        {name:'plane',
-        speed:4,
-            cost:40
-        },
-        {name:'car',
-            speed:2,
-            cost:20
-        },
-        {name:'train',
-            speed:3,
-            cost:30
-        }
-    ]
-}
-
-
-const busket = {
-    waitingList:[],
-    approve:[],
-}
+import {data} from "./service";
 
 let bankAccount=3000;
 
-
-
 const funCityDis = (fromCity,toCity, transport)=>{
     if (data.city.length===0){
-        return 20;
+        return 0;
     }
 
     let from = data.city.filter(el=>{
@@ -82,27 +30,7 @@ const funCityDis = (fromCity,toCity, transport)=>{
         }
         else return false
     })
-    if (tran.length===0){
-
-
-    }else busket.waitingList.push(
-        {
-            cityFrom:fromCity,
-            cityTo:toCity,
-            distance:distance,
-            cost:distance/tran[0].cost,
-            time: distance/tran[0].speed,
-        }
-    )
-console.log({
-    cityFrom:fromCity,
-    cityTo:toCity,
-    distance:distance,
-    cost:distance/tran[0].cost,
-    time: distance/tran[0].speed,
-})
-
-    return      {
+    return {
         cityFrom:fromCity,
         cityTo:toCity,
         distance:distance,
@@ -112,36 +40,21 @@ console.log({
 
 }
 
-const updateBusket=(index)=>{
-    busket.approve.push(busket.waitingList[index])
-    bankAccount=bankAccount-busket.approve[0].cost
-}
-
-funCityDis("Almaty", "Dubai", "plane")
-funCityDis("Astana", "Dubai", "plane")
-updateBusket(0)
-
-console.log(busket, bankAccount)
-
-
-
-
 
 
 const Example = ()=> {
-    const [from, setFrom]=useState(null);
-    const [to,setTo]=useState(null);
-    const [transport,setTransport]=useState(null);
+    const [from, setFrom]=useState(data.city[0].name);
+    const [to,setTo]=useState(data.city[0].name);
     const [typeOfSales,setTypeOfSales] = useState(data.transport[0].name);
     const [result, setResult]=useState({})
-
-
+    const [approvedTicked,setApprovedTicked]=useState([]);
+    const [num, setNum]=useState(0)
 
 
     return <div className='wrapper'>
         <div className='header'>
-            <div className='title'> Поиск дешевых авиабилетов</div>
-            <div className='subtitle'> Легкий способ купить авиабилеты дешево </div>
+            <div className='title'> Поиск дешевых билетов</div>
+            <div className='subtitle'> Легкий способ купить билеты дешево </div>
         </div>
         <div className='main'>
             <div>
@@ -181,30 +94,50 @@ const Example = ()=> {
 
                 <div className='block'>
                     <div className='from'>Count:</div>
-                    <input type="number"/>
+                    <input type="number" onChange={(event)=>{setNum(event.target.value)}}/>
                 </div>
             </div>
-
             <div className='action'>
-
                 <button onClick={()=> {
-
                     setResult(funCityDis(from,to,typeOfSales))
-
-
-                }}>Найти билеты</button>
+                }} disabled={to===from}>Найти билеты</button>
             </div>
         </div>
 
         <div className='result-block'>
-            <div>
-                result
-                <div>
-                    {result?.cityFrom}
-                </div>
+            <div>result{result.cityFrom? <div className="ticket">
+                <div><span>{result.cityFrom}</span><span>-></span><span>{result.cityTo}</span></div>
+                    <div>
+                        <div>time:{result.time}</div>
+                        <div>cost:{result.cost}</div>
+                    </div>
+                <button onClick={()=>{
+                setApprovedTicked([...approvedTicked, {...result,count:num}]);
+                bankAccount=bankAccount-result.cost*num;
+                setNum(0)
+                setResult({});
+                }
+                } disabled={num===0}>buy</button>
+                </div>:null}
             </div>
             <div>
                 profile
+                <div>
+                    bankAccount :{bankAccount}
+                </div>
+                <div>
+                    <div>tickets:</div>
+                    {approvedTicked.map(el=>{
+                        return<div className="ticket">
+                            <div><span>{el.cityFrom}</span><span>-></span><span>{el.cityTo}</span></div>
+                            <div>
+                                <div>time:{el.time}</div>
+                                <div>cost:{el.cost}</div>
+                                <div>count: {el.count}</div>
+                            </div>
+                        </div>
+                    })}
+                </div>
             </div>
         </div>
     </div>
